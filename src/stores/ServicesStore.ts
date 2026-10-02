@@ -917,7 +917,10 @@ export default class ServicesStore extends TypedStore {
           return;
         }
 
-        if (service.isMuted || this.stores.settings.all.app.isAppMuted) {
+        const shouldPlaySound =
+          !service.isMuted && !this.stores.settings.all.app.isAppMuted;
+
+        if (!shouldPlaySound) {
           Object.assign(options, {
             silent: true,
           });
@@ -942,6 +945,7 @@ export default class ServicesStore extends TypedStore {
             title,
             options,
             serviceId,
+            shouldPlaySound,
           });
         }
 

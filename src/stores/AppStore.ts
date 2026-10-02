@@ -51,6 +51,18 @@ import TypedStore from './lib/TypedStore';
 
 const debug = require('../preload-safe-debug')('Ferdium:AppStore');
 
+const notificationSound = new Audio(
+  new URL('./assets/sounds/notification.wav', window.location.href).toString(),
+);
+notificationSound.preload = 'auto';
+
+const playNotificationSound = (): void => {
+  notificationSound.currentTime = 0;
+  notificationSound.play().catch(error => {
+    debug('Failed to play notification sound', error);
+  });
+};
+
 const mainWindow = getCurrentWindow();
 
 const executablePath = isMac
@@ -498,7 +510,13 @@ export default class AppStore extends TypedStore {
   }
 
   // Actions
-  @action _notify({ title, options, notificationId, serviceId = null }) {
+  @action _notify({
+    title,
+    options,
+    notificationId,
+    serviceId = null,
+    shouldPlaySound = false,
+  }) {
     if (this.stores.settings.all.app.isAppMuted) return;
 
     // TODO: is there a simple way to use blobs for notifications without storing them on disk?
@@ -511,10 +529,10 @@ export default class AppStore extends TypedStore {
 
     if (
       serviceId &&
-      this.stores.settings.all.app.playNotificationSound &&
-      options.silent !== true
+      shouldPlaySound &&
+      this.stores.settings.all.app.playNotificationSound
     ) {
-      ipcRenderer.send('play-notification-sound');
+      playNotificationSound();
     }
 
     debug('New notification', title, options);

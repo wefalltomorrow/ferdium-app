@@ -71,6 +71,7 @@ asarUnpack:
   - ./assets/fonts
   - ./assets/images/taskbar
   - ./assets/images/icons
+  - ./assets/sounds
 
 mac:
   hardenedRuntime: true

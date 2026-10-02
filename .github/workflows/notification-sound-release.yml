@@ -13,8 +13,8 @@ jobs:
     if: ${{ github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[release notification-sound]') }}
     runs-on: windows-2022
     env:
-      RELEASE_TAG: v7.2.4-nightly.3-notificationsound.1
-      RELEASE_VERSION: 7.2.4-nightly.3.notificationsound.1
+      RELEASE_TAG: v7.2.4-nightly.3-notificationsound.2
+      RELEASE_VERSION: 7.2.4-nightly.3.notificationsound.2
 
     steps:
       - name: Checkout source
@@ -86,4 +86,4 @@ jobs:
             --target "$GITHUB_SHA" \
             --title "Ferdium 7.2.4-nightly.3 + notification sound fix" \
             --prerelease \
-            --notes "Based on upstream Ferdium v7.2.4-nightly.3. Adds an opt-in Ferdium fallback sound for desktop notifications under Settings > Privacy. The sound respects global mute, per-service mute, and scheduled Do-not-Disturb."
+            --notes "Based on upstream Ferdium v7.2.4-nightly.3. Adds an opt-in bundled Ferdium notification chime under Settings > Privacy. This build replaces the Windows system-beep fallback with a real WAV and separates Ferdium mute state from service-provided silent notification flags. Global mute, per-service mute, and scheduled Do-not-Disturb are still respected."
