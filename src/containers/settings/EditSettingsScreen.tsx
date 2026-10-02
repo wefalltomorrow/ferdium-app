@@ -92,6 +92,10 @@ const messages = defineMessages({
     id: 'settings.app.form.privateNotifications',
     defaultMessage: "Don't show message content in notifications",
   },
+  playNotificationSound: {
+    id: 'settings.app.form.playNotificationSound',
+    defaultMessage: 'Play a Ferdium sound for desktop notifications',
+  },
   clipboardNotifications: {
     id: 'settings.app.form.clipboardNotifications',
     defaultMessage: "Don't show notifications for clipboard events",
@@ -444,6 +448,7 @@ class EditSettingsScreen extends Component<
       closeToSystemTray:
         trayDependencySatisfied && Boolean(settingsData.closeToSystemTray),
       privateNotifications: Boolean(settingsData.privateNotifications),
+      playNotificationSound: Boolean(settingsData.playNotificationSound),
       clipboardNotifications: Boolean(settingsData.clipboardNotifications),
       notifyTaskBarOnMessage: Boolean(settingsData.notifyTaskBarOnMessage),
       isTwoFactorAutoCatcherEnabled: Boolean(
@@ -820,6 +825,15 @@ class EditSettingsScreen extends Component<
             DEFAULT_APP_SETTINGS.privateNotifications,
           ),
           default: DEFAULT_APP_SETTINGS.privateNotifications,
+          type: 'checkbox',
+        },
+        playNotificationSound: {
+          label: intl.formatMessage(messages.playNotificationSound),
+          value: ifUndefined<boolean>(
+            settings.all.app.playNotificationSound,
+            DEFAULT_APP_SETTINGS.playNotificationSound,
+          ),
+          default: DEFAULT_APP_SETTINGS.playNotificationSound,
           type: 'checkbox',
         },
         clipboardNotifications: {

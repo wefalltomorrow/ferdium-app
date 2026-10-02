@@ -580,6 +580,7 @@ export const DEFAULT_APP_SETTINGS = {
   minimizeToSystemTray: false,
   closeToSystemTray: false,
   privateNotifications: false,
+  playNotificationSound: false,
   clipboardNotifications: true,
   notifyTaskBarOnMessage: false,
   showDisabledServices: true,

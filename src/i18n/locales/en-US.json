@@ -319,6 +319,7 @@
   "settings.app.form.passwordToggle": "Password toggle",
   "settings.app.form.predefinedTodoServer": "Todo Server",
   "settings.app.form.privateNotifications": "Don't show message content in notifications",
+  "settings.app.form.playNotificationSound": "Play a Ferdium sound for desktop notifications",
   "settings.app.form.progressbarAccentColor": "Progressbar Accent color",
   "settings.app.form.reloadAfterResume": "Reload Ferdium after system resume",
   "settings.app.form.reloadAfterResumeTime": "Time to consider the system as idle/suspended (in minutes)",

@@ -509,6 +509,14 @@ export default class AppStore extends TypedStore {
 
     const notification = new window.Notification(title, options);
 
+    if (
+      serviceId &&
+      this.stores.settings.all.app.playNotificationSound &&
+      options.silent !== true
+    ) {
+      ipcRenderer.send('play-notification-sound');
+    }
+
     debug('New notification', title, options);
 
     notification.addEventListener('click', () => {

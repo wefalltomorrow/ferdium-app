@@ -10,6 +10,7 @@ import {
   globalShortcut,
   ipcMain,
   session,
+  shell,
 } from 'electron';
 
 import { initialize } from 'electron-react-titlebar/main';
@@ -751,6 +752,10 @@ ipcMain.on('request-translation-cache', event => {
     debug('Error sending translation cache:', error);
     event.reply('translation-cache', {});
   }
+});
+
+ipcMain.on('play-notification-sound', () => {
+  shell.beep();
 });
 
 // TODO: evaluate if we need to store the authCallback for every service

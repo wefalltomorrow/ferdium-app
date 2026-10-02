@@ -990,6 +990,7 @@ class EditSettingsForm extends Component<IProps, IState> {
                 </H2>
 
                 <Toggle {...form.$('privateNotifications').bind()} />
+                <Toggle {...form.$('playNotificationSound').bind()} />
                 <Toggle {...form.$('clipboardNotifications').bind()} />
                 {(isWindows || isMac) && (
                   <Toggle {...form.$('notifyTaskBarOnMessage').bind()} />
