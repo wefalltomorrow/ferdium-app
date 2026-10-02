@@ -52,7 +52,7 @@ import TypedStore from './lib/TypedStore';
 const debug = require('../preload-safe-debug')('Ferdium:AppStore');
 
 const notificationSound = new Audio(
-  new URL('./assets/sounds/notification.wav', window.location.href).toString(),
+  new URL('assets/sounds/notification.wav', window.location.href).toString(),
 );
 notificationSound.preload = 'auto';
 
