@@ -1,0 +1,89 @@
+name: Notification Sound Windows Release
+
+on:
+  push:
+    branches: [develop]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-release:
+    if: ${{ github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[release notification-sound]') }}
+    runs-on: windows-2022
+    env:
+      RELEASE_TAG: v7.2.4-nightly.3-notificationsound.1
+      RELEASE_VERSION: 7.2.4-nightly.3.notificationsound.1
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          fetch-depth: 0
+
+      - name: Use Node.js from .nvmrc
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Package recipes
+        working-directory: ./recipes
+        shell: bash
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm lint
+          pnpm reformat-files
+          pnpm package
+
+      - name: Run linter and tests
+        shell: bash
+        run: |
+          pnpm lint
+          pnpm test
+
+      - name: Set fork release version
+        shell: pwsh
+        run: |
+          $package = Get-Content package.json -Raw | ConvertFrom-Json
+          $package.version = $env:RELEASE_VERSION
+          $package | ConvertTo-Json -Depth 100 | Set-Content package.json -Encoding utf8
+
+      - name: Build Windows x64 installer and portable
+        shell: bash
+        env:
+          CSC_IDENTITY_AUTO_DISCOVERY: false
+        run: |
+          pnpm exec preval-build-info-cli
+          node esbuild.mjs
+          pnpm exec electron-builder --win --x64 --publish never
+
+      - name: Verify release files
+        shell: pwsh
+        run: |
+          $installer = "out/Ferdium-win-AutoSetup-$env:RELEASE_VERSION-x64.exe"
+          $portable = "out/Ferdium-win-Portable-$env:RELEASE_VERSION-x64.exe"
+          if (!(Test-Path $installer)) { throw "Missing installer: $installer" }
+          if (!(Test-Path $portable)) { throw "Missing portable build: $portable" }
+          Get-FileHash $installer -Algorithm SHA256 | Format-List
+          Get-FileHash $portable -Algorithm SHA256 | Format-List
+
+      - name: Publish prerelease
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$RELEASE_TAG" \
+            "out/Ferdium-win-AutoSetup-$RELEASE_VERSION-x64.exe" \
+            "out/Ferdium-win-Portable-$RELEASE_VERSION-x64.exe" \
+            --target "$GITHUB_SHA" \
+            --title "Ferdium 7.2.4-nightly.3 + notification sound fix" \
+            --prerelease \
+            --notes "Based on upstream Ferdium v7.2.4-nightly.3. Adds an opt-in Ferdium fallback sound for desktop notifications under Settings > Privacy. The sound respects global mute, per-service mute, and scheduled Do-not-Disturb."
