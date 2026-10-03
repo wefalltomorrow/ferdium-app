@@ -10,6 +10,7 @@ export default <ActionDefinitions>{
     title: PropTypes.string.isRequired,
     options: PropTypes.object.isRequired,
     serviceId: PropTypes.string,
+    shouldPlaySound: PropTypes.bool,
   },
   launchOnStartup: {
     enable: PropTypes.bool.isRequired,

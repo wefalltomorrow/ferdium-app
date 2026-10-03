@@ -51,18 +51,6 @@ import TypedStore from './lib/TypedStore';
 
 const debug = require('../preload-safe-debug')('Ferdium:AppStore');
 
-const notificationSound = new Audio(
-  new URL('assets/sounds/notification.wav', window.location.href).toString(),
-);
-notificationSound.preload = 'auto';
-
-const playNotificationSound = (): void => {
-  notificationSound.currentTime = 0;
-  notificationSound.play().catch(error => {
-    debug('Failed to play notification sound', error);
-  });
-};
-
 const mainWindow = getCurrentWindow();
 
 const executablePath = isMac
@@ -527,12 +515,20 @@ export default class AppStore extends TypedStore {
 
     const notification = new window.Notification(title, options);
 
-    if (
-      serviceId &&
+    const playFallbackSound =
+      Boolean(serviceId) &&
       shouldPlaySound &&
-      this.stores.settings.all.app.playNotificationSound
-    ) {
-      playNotificationSound();
+      this.stores.settings.all.app.playNotificationSound;
+
+    debug('Notification fallback sound', {
+      serviceId,
+      shouldPlaySound,
+      enabled: this.stores.settings.all.app.playNotificationSound,
+      playFallbackSound,
+    });
+
+    if (playFallbackSound) {
+      ipcRenderer.send('play-notification-sound');
     }
 
     debug('New notification', title, options);

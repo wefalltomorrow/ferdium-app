@@ -1,5 +1,6 @@
 /* eslint-disable import/first */
 
+import { execFile } from 'node:child_process';
 import { EventEmitter } from 'node:events';
 import { join } from 'node:path';
 import {
@@ -751,6 +752,38 @@ ipcMain.on('request-translation-cache', event => {
     debug('Error sending translation cache:', error);
     event.reply('translation-cache', {});
   }
+});
+
+const notificationSoundPath = asarPath(
+  join(__dirname, 'assets', 'sounds', 'notification.wav'),
+);
+
+ipcMain.on('play-notification-sound', () => {
+  if (!isWindows) {
+    return;
+  }
+
+  const escapedSoundPath = notificationSoundPath.replaceAll("'", "''");
+  const command =
+    `$player = New-Object System.Media.SoundPlayer '${escapedSoundPath}'; $player.PlaySync()`;
+
+  execFile(
+    'powershell.exe',
+    [
+      '-NoProfile',
+      '-NonInteractive',
+      '-WindowStyle',
+      'Hidden',
+      '-Command',
+      command,
+    ],
+    { windowsHide: true },
+    error => {
+      if (error) {
+        debug('Failed to play notification sound', error);
+      }
+    },
+  );
 });
 
 // TODO: evaluate if we need to store the authCallback for every service
