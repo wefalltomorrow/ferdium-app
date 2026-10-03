@@ -764,8 +764,7 @@ ipcMain.on('play-notification-sound', () => {
   }
 
   const escapedSoundPath = notificationSoundPath.replaceAll("'", "''");
-  const command =
-    `$player = New-Object System.Media.SoundPlayer '${escapedSoundPath}'; $player.PlaySync()`;
+  const command = `$player = New-Object System.Media.SoundPlayer '${escapedSoundPath}'; $player.PlaySync()`;
 
   execFile(
     'powershell.exe',
